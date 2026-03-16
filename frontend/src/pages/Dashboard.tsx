@@ -12,10 +12,18 @@ function Dashboard() {
   }, []);
 
   const handleComplete = async (id: number) => {
-    await completeTask(id);
+    const task = tasks.find((t) => t.id === id);
+    const nextCompleted = !task?.completed;
+
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, completed: true } : t)),
+      prev.map((t) =>
+        t.id === id ? { ...t, completed: nextCompleted } : t,
+      ),
     );
+
+    if (nextCompleted) {
+      await completeTask(id);
+    }
   };
 
   const handleNotes = async (id: number, notes: string) => {

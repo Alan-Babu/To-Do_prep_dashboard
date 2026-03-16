@@ -1,12 +1,14 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
+  --text: #2a1851;
+  --text-h: #12001f;
+  --muted: rgba(42, 24, 81, 0.72);
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
+  --accent: #8b5cf6;
+  --accent-2: #06b6d4;
+  --accent-bg: rgba(139, 92, 246, 0.18);
+  --accent-border: rgba(139, 92, 246, 0.7);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
@@ -17,7 +19,7 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -32,14 +34,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
+    --text: #e5e7eb;
+    --text-h: #ffffff;
+    --muted: rgba(229, 231, 235, 0.78);
+    --bg: #0b1020;
+    --border: rgba(148, 163, 184, 0.22);
+    --code-bg: rgba(15, 23, 42, 0.7);
+    --accent: #a78bfa;
+    --accent-2: #22d3ee;
+    --accent-bg: rgba(167, 139, 250, 0.18);
+    --accent-border: rgba(167, 139, 250, 0.55);
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
@@ -52,7 +56,18 @@
 
 body {
   margin: 0;
-  background: radial-gradient(circle at top left, #f4f3ec 0, #ffffff 45%);
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, #f9f5ff 0, #ffffff 40%),
+    radial-gradient(circle at bottom right, #e0f2fe 0, #ffffff 55%);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background:
+      radial-gradient(circle at top left, rgba(167, 139, 250, 0.22) 0, rgba(11, 16, 32, 1) 45%),
+      radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.16) 0, rgba(11, 16, 32, 1) 55%);
+  }
 }
 
 #root {
@@ -123,14 +138,14 @@ code {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: var(--text);
-  opacity: 0.8;
+  color: var(--accent);
+  opacity: 1;
   margin-bottom: 4px;
 }
 
 .dashboard-subtitle {
   font-size: 15px;
-  color: var(--text);
+  color: var(--muted);
 }
 
 .dashboard-content {
@@ -143,7 +158,11 @@ code {
   border-radius: 16px;
   padding: 18px 20px;
   border: 1px solid var(--accent-border);
-  background: var(--accent-bg);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.18),
+    rgba(244, 244, 255, 0.8)
+  );
   box-shadow: var(--shadow);
 }
 
@@ -159,12 +178,12 @@ code {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: var(--text);
+  color: var(--accent);
 }
 
 .progress-meta {
   font-size: 13px;
-  color: var(--text);
+  color: var(--muted);
 }
 
 .progress-bar {
@@ -172,7 +191,7 @@ code {
   width: 100%;
   height: 10px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(2, 6, 23, 0.08);
   overflow: hidden;
 }
 
@@ -180,7 +199,7 @@ code {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(90deg, #22c55e, #16a34a);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
   transform-origin: left;
   transition: width 200ms ease-out;
 }
@@ -189,7 +208,7 @@ code {
   border-radius: 16px;
   padding: 16px 18px 14px;
   border: 1px solid var(--border);
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.92);
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.06),
     0 8px 16px -8px rgba(15, 23, 42, 0.15);
@@ -199,8 +218,18 @@ code {
 }
 
 .task-card--completed {
-  opacity: 0.75;
-  background: #f5f5f7;
+  opacity: 0.9;
+  background: #f5f3ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .task-card {
+    background: rgba(15, 23, 42, 0.72);
+  }
+
+  .task-card--completed {
+    background: rgba(167, 139, 250, 0.16);
+  }
 }
 
 .task-card-header {
@@ -250,8 +279,8 @@ code {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--text);
-  opacity: 0.9;
+  color: var(--accent);
+  opacity: 1;
 }
 
 .task-card-topic {
@@ -266,8 +295,12 @@ code {
   font: 14px/1.4 var(--sans);
   resize: vertical;
   min-height: 64px;
-  background: #fafafa;
+  background: rgba(2, 6, 23, 0.03);
   color: var(--text);
+}
+
+.task-notes::placeholder {
+  color: var(--muted);
 }
 
 .task-notes:focus {
