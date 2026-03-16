@@ -1,32 +1,30 @@
 import type { Task } from "../types/Task";
 
-let tasks: Task[] = [
-    {
-    id: 1,
-    topic: "Arrays",
-    focusArea: "DSA",
-    completed: false,
-    notes: ""
-  },
-  {
-    id: 2,
-    topic: "Generators",
-    focusArea: "Python",
-    completed: false,
-    notes: ""
-  }
-]
+const API_URL = "http://localhost:8000";
 
 export const getTasks=async(): Promise<Task[]> =>{
-    return Promise.resolve(tasks)
+    const res = await fetch(`${API_URL}/tasks`);
+    if(!res.ok){
+        throw new Error("Failed to fetch tasks");
+    }
+    return res.json();
 }
 
 export const completeTask = async(id: number)=>{
-    tasks = tasks.map(t=>
-        t.id === id ? {...t, completed: true} : t
-    )
+    const res = await fetch(`${API_URL}/tasks/${id}/complete`, {method: "POST"});
+    if(!res.ok){
+        throw new Error("Failed to complete task");
+    }
+    return res.json();
 }
 
 export const updateNotes = async(id: number, notes: string)=>{
-    tasks = tasks.map(t=> t.id === id ? {...t, notes} : t)
+    const res =await fetch(`${API_URL}/tasks/${id}/notes?notes=${encodeURIComponent(notes)}`,
+    {
+        method:"POST"
+    });
+    if(!res.ok){
+        throw new Error("Failed to update notes");
+    }
+    return res.json();
 }
