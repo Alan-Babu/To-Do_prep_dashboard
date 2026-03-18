@@ -11,6 +11,7 @@ function TaskCard({ task, onComplete, onNotes }: Props) {
     <article
       className={`task-card ${task.completed ? "task-card--completed" : ""}`}
     >
+      {/* HEADER */}
       <div className="task-card-header">
         <label className="task-checkbox">
           <input
@@ -22,11 +23,20 @@ function TaskCard({ task, onComplete, onNotes }: Props) {
           <span className="task-checkbox-visual" />
         </label>
         <div className="task-card-text">
+          <p className="task-card-day">
+            {task.day} • {task.date}
+          </p>
+          <p className="task-card-time">{task.timeBlock}</p>
           <p className="task-card-focus">{task.focusArea}</p>
           <p className="task-card-topic">{task.topic}</p>
         </div>
       </div>
 
+      {/*Resource*/}
+      <div className="task-card-resources">
+          {task.learningResource && (<a href={task.learningResource} target="_blank" rel="noopener noreferrer">📘 Learning Resource</a>)} 
+          {task.practiseResource && (<a href={task.practiseResource} target="_blank" rel="noopener noreferrer">📝 Practice Resource</a>)}
+      </div>
       <textarea
         className="task-notes"
         placeholder="Add notes, links, or key takeaways…"

@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import dotenv
+import logging
 
 dotenv.load_dotenv()
 
@@ -21,8 +22,9 @@ class ExcelLoader:
                 "focusArea":row.get("Focus Area",""),
                 "topic":row.get("Topic",""),
                 "learningResource":row.get("Learning Resource",""),
-                "practiseResource":row.get("Practise Resource",""),
+                "practiseResource":row.get("Practice Resource",""),
                 "completed":False,
                 "notes":""
             })
         return tasks
+        
