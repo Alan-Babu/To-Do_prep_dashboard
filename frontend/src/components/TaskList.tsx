@@ -32,6 +32,16 @@ const formatDateKeyFromTs = (ts: number) => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 };
+const weekKeyForTask = (task: Task) => {
+  const ts = parseDateTs(task.date ?? "");
+  if (ts === null) return "Unscheduled";
+
+  const dateObj = new Date(ts);
+  const weekdayIndex = (dateObj.getDay() + 6) % 7; // Mon=0
+  const weekStartTs = ts - weekdayIndex * 86400000;
+
+  return formatDateKeyFromTs(weekStartTs); // e.g. 2026-03-16
+};
 
 function sortTasks(tasks: Task[]) {
   // Order by (weekStart, weekday(Mon..Sun), date, time, topic).
@@ -236,33 +246,36 @@ function TaskList({ tasks, onComplete, onNotes }: Props) {
       (
         acc: Record<
           string,
-          {
-            label: string;
-            date: string;
-            tasks: Task[];
-          }
+          Record<
+            string,
+            {
+              date: string;
+              tasks: Task[];
+            }
+          >
         >,
         task,
       ) => {
+        const weekKey = weekKeyForTask(task);
+        const dayKey = normalizeDay(task.day);
         const dateKey = normalizeDateKey(task.date);
-        if (!acc[dateKey]) {
-          acc[dateKey] = {
-            label: normalizeDay(task.day),
+
+        if (!acc[weekKey]) {
+          acc[weekKey] = {};
+        }
+
+        if (!acc[weekKey][dayKey]) {
+          acc[weekKey][dayKey] = {
             date: dateKey,
             tasks: [],
           };
         }
-        acc[dateKey].tasks.push(task);
+
+        acc[weekKey][dayKey].tasks.push(task);
+
         return acc;
       },
-      {} as Record<
-        string,
-        {
-          label: string;
-          date: string;
-          tasks: Task[];
-        }
-      >,
+      {},
     );
   }, [pageTasks]);
 
@@ -408,18 +421,26 @@ function TaskList({ tasks, onComplete, onNotes }: Props) {
           </nav>
 
           <div className="task-list">
-            {Object.entries(grouped).map(([dateKey, group]) => (
-              <div key={dateKey} className="task-list-day">
-                <h2>
-                  {group.label} <span className="task-list-day-date">• {group.date}</span>
-                </h2>
-                {group.tasks.map((task) => (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    onComplete={onComplete}
-                    onNotes={onNotes}
-                  />
+            {Object.entries(grouped).map(([weekKey, days]) => (
+              <div key={weekKey} className="task-list-week">
+                <h2 className="task-list-week-title">Week of {weekKey}</h2>
+
+                {Object.entries(days).map(([day, group]) => (
+                  <div key={day} className="task-list-day">
+                    <h3>
+                      {day}{" "}
+                      <span className="task-list-day-date">• {group.date}</span>
+                    </h3>
+
+                    {group.tasks.map((task) => (
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        onComplete={onComplete}
+                        onNotes={onNotes}
+                      />
+                    ))}
+                  </div>
                 ))}
               </div>
             ))}
