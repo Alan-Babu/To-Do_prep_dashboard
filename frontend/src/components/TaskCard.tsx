@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { type Task } from "../types/Task";
 
 interface Props {
@@ -7,6 +8,44 @@ interface Props {
 }
 
 function TaskCard({ task, onComplete, onNotes }: Props) {
+  const baseNotes = task.notes ?? "";
+  const [notesDraft, setNotesDraft] = useState(baseNotes);
+  const saveTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setNotesDraft(baseNotes);
+  }, [task.id, baseNotes]);
+
+  useEffect(() => {
+    if (notesDraft === baseNotes) return;
+
+    if (saveTimerRef.current !== null) {
+      globalThis.clearTimeout(saveTimerRef.current);
+    }
+
+    saveTimerRef.current = globalThis.setTimeout(() => {
+      onNotes(task.id, notesDraft);
+      saveTimerRef.current = null;
+    }, 600);
+
+    return () => {
+      if (saveTimerRef.current !== null) {
+        globalThis.clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, [notesDraft, baseNotes, onNotes, task.id]);
+
+  const flushSave = () => {
+    if (saveTimerRef.current !== null) {
+      globalThis.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+
+    if (notesDraft !== baseNotes) {
+      onNotes(task.id, notesDraft);
+    }
+  };
+
   return (
     <article
       className={`task-card ${task.completed ? "task-card--completed" : ""}`}
@@ -40,8 +79,9 @@ function TaskCard({ task, onComplete, onNotes }: Props) {
       <textarea
         className="task-notes"
         placeholder="Add notes, links, or key takeaways…"
-        value={task.notes ?? ""}
-        onChange={(e) => onNotes(task.id, e.target.value)}
+        value={notesDraft}
+        onChange={(e) => setNotesDraft(e.target.value)}
+        onBlur={flushSave}
       />
     </article>
   );
